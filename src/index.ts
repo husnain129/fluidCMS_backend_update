@@ -2,12 +2,10 @@ require("dotenv").config();
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import FluidError from "FluidError";
-import { connect } from "mongoose";
+// import { connect } from "mongoose";
 import FluidRouter from "./FluidRouter";
-// const mongoose = require("mongoose");
-connect("mongodb://127.0.0.1:27017/Fluid").then(() =>
-  console.log("DB Connected")
-);
+const mongoose = require("mongoose");
+mongoose.connect("mongodb://127.0.0.1:27017/Fluid")
 
 const fileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");

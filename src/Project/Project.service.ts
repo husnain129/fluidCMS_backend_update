@@ -11,6 +11,10 @@ class ProjectService {
   static async getAllProjects(userID:string){
     return await ProjectDao.getAllProjects();
   }
+
+  static async updateProject(projectID:string,title:string){
+    return await ProjectDao.updateProject(projectID, title);
+  }
 }
 
 export default ProjectService;
