@@ -2,10 +2,8 @@ require("dotenv").config();
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import FluidError from "FluidError";
-// import { connect } from "mongoose";
+import { connect } from "mongoose";
 import FluidRouter from "./FluidRouter";
-const mongoose = require("mongoose");
-mongoose.connect("mongodb://127.0.0.1:27017/Fluid")
 
 const fileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
@@ -50,5 +48,9 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 const PORT: number = parseInt(process.env.PORT || "3001");
+
+connect("mongodb://127.0.0.1:27017/Fluid")
+  .then(() => {console.log("DB Connected....");})
+  .catch(err => {console.log("Mongoose Connection Error", err)})
 
 app.listen(PORT, () => console.log(`Server is Listening On PORT ${PORT}...`));

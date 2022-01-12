@@ -1,5 +1,4 @@
 import { Document } from "mongoose";
-import mongoose from 'mongoose';
 import { AccessToken } from "../Types/enums";
 
 export type TAccess = {
