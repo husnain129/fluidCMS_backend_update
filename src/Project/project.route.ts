@@ -3,7 +3,8 @@ import Project from "./Project";
 const router = FluidRouter.getInstace();
 
 router.route("/project").post(Project.createProject);
-router.route("/project/all").get(Project.getAllProjects);
-router.route("/project/update/:id").get(Project.updateProject);
+router.route("/project").get(Project.getAllProjects);
 router.route("/project/:id").get(Project.getOneProject);
+router.route("/project/:id").patch(Project.updateProject);
+router.route("/project/:id").delete(Project.updateProject);
 export default router;

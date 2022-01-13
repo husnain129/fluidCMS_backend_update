@@ -8,7 +8,8 @@ import FluidRouter from "./FluidRouter";
 const fileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
 
-import("./Project/project.route");
+import("./User/User.route");
+import("./Project/Project.route");
 
 const app = express();
 app.use(
@@ -39,12 +40,12 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   // let duplicateError =
   //   (error as any).statusCode === 500 &&
   //   error.message.split(" ")[0] === "E11000";
-
+  console.log(error);
   res.status((error as FluidError).statusCode || 500).json({
     ok: false,
-    error: error.message,
+    status: (error as FluidError).statusCode,
+    message:error
   });
-  // console.warn(error);
 });
 
 const PORT: number = parseInt(process.env.PORT || "3001");

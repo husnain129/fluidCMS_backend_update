@@ -15,6 +15,9 @@ class ProjectService {
   static async updateProject(projectID:string,title:string){
     return await ProjectDao.updateProject(projectID, title);
   }
+  static async deleteProject(projectID:string){
+    return await ProjectDao.deleteProject(projectID)
+  }
 }
 
 export default ProjectService;

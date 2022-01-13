@@ -1,10 +1,13 @@
+
+export type APIStatusCode = 200 | 400 | 401 | 404 | 500;
+
 class FluidError extends Error {
-  status: string;
-  statusCode: number;
-  constructor(msg: string, statusCode: number) {
-    super(msg);
+  statusCode: APIStatusCode;
+  message: string;
+  constructor(message: string, statusCode: APIStatusCode) {
+    super(message);
+    this.message = message;
     this.statusCode = statusCode;
-    this.status = `${msg}`.startsWith("4") ? "fail" : "error";
     Error.captureStackTrace(this, this.constructor);
   }
 }

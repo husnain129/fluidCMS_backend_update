@@ -11,3 +11,12 @@ export enum AccessToken {
   READ = 1,
   FULL = 0,
 }
+
+export enum STATUS{
+  BAD_REQUEST = 400,
+  UNAUTHORIZE = 401,
+  NOT_FOUND =404,
+  INTERNAL_SERVER_ERROR = 500,
+  OK = 200,
+  CREATED = 201
+}

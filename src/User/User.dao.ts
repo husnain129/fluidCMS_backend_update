@@ -1,0 +1,69 @@
+import { IUserReturn, IUserBody } from './User.interface';
+import FluidError from '../FluidError';
+import User from './User.schema'
+import { STATUS } from '../Types/enums'
+import generateJWTToken from '../utils/generateJWTToken';
+import mongoose from 'mongoose';
+
+class UserDao {
+	static async createUser(_b: IUserBody): Promise<IUserReturn> {
+		try {
+			let { email, password, first_name, last_name, profile } = _b;
+			if (await User.findOne({ email })) throw new FluidError("User Exist", STATUS.BAD_REQUEST);
+			const user = new User({
+				first_name,
+				last_name,
+				email,
+				password,
+				profile,
+			});
+			await user.save();
+			let token: string = generateJWTToken(user!._id);
+			return {
+				_id: user._id,
+				first_name: user.first_name,
+				last_name: user.last_name,
+				profile: user.profile,
+				created_at: user.created_at.toISOString(),
+				token: token
+			}
+		} catch (err: any) {
+			if (err instanceof mongoose.Error) {
+				throw new FluidError(err.message, STATUS.BAD_REQUEST);
+			} else {
+				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
+			}
+		}
+	}
+
+	static async login(email: string, password: string): Promise<Partial<IUserReturn>> {
+		try {
+			const user = (await User.findOne({ email }).select(
+				"+password"
+			));
+			let isMatch: boolean = false;
+			if (password) {
+				isMatch = await user!.matchPassword(password, user!.password);
+			}
+
+			if (!isMatch) throw new FluidError("Invalid email or password.", STATUS.BAD_REQUEST);
+			const token: string = generateJWTToken(user!._id);
+			return {
+				_id: user!._id,
+				first_name: user!.first_name,
+				last_name: user!.last_name,
+				profile: user!.profile,
+				token,
+			}
+		} catch (err: any) {
+			if (err instanceof mongoose.Error) {
+				throw new FluidError(err.message, STATUS.BAD_REQUEST);
+			} else {
+				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
+			}
+		}
+	}
+}
+
+
+export default UserDao;
