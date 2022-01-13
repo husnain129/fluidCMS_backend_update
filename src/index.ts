@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 
 import("./User/User.route");
 import("./Project/Project.route");
+import("./Model/Model.route");
 
 const app = express();
 app.use(
@@ -40,11 +41,9 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   // let duplicateError =
   //   (error as any).statusCode === 500 &&
   //   error.message.split(" ")[0] === "E11000";
-  console.log(error);
   res.status((error as FluidError).statusCode || 500).json({
     ok: false,
     status: (error as FluidError).statusCode,
-    message:error
   });
 });
 

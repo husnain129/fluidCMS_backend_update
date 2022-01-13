@@ -12,6 +12,10 @@ class UserService{
 	static async updateUser(userID: string, first_name: string, last_name: string){
 		return await UserDao.updateUser(userID,first_name,last_name);
 	}
+
+	static async updatePassword(userID:string,password:string,newPassword:string){
+		return await UserDao.updatePassword(userID, password, newPassword);
+	}
 }
 
 export default UserService;

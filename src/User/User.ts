@@ -39,6 +39,15 @@ class User {
 			message: await UserService.updateUser(userID, first_name, last_name)
 		})
 	}
+
+	static async updatePassword(req: Request, res: Response, next: NextFunction) {
+		const { password, newPassword } = req.body;
+		let userID = (req as any).userID;
+		res.status(STATUS.OK).json({
+			ok: true,
+			message: await UserService.updatePassword(userID, password, newPassword)
+		})
+	}
 }
 
 export default User;

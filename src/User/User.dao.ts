@@ -80,6 +80,27 @@ class UserDao {
 			}
 		}
 	}
+
+	static async updatePassword(userID: string, password: string, newPassword: string) {
+		try {
+			const user = (await User.findById(userID).select("+password"));
+			if (!password && !newPassword) throw new FluidError("Please provide password or confirmPassword.", STATUS.BAD_REQUEST);
+			if (!user) throw new FluidError("User not found.", STATUS.BAD_REQUEST);
+			if (!(await user.matchPassword(password, user.password))) throw new FluidError("Password not match.", STATUS.BAD_REQUEST);
+
+			if (newPassword.length < 6) throw new FluidError("Password length > 6", STATUS.BAD_REQUEST);
+			user.password = newPassword;
+			await user.save();
+			return "Password Updated";
+
+		} catch (err: any) {
+			if (err instanceof mongoose.Error) {
+				throw new FluidError(err.message, STATUS.BAD_REQUEST);
+			} else {
+				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
+			}
+		}
+	}
 }
 
 
