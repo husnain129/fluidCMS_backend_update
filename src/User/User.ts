@@ -19,16 +19,25 @@ class User {
 		}
 	}
 
-	static async login(req:Request,res:Response,next:NextFunction){
-		try{
+	static async login(req: Request, res: Response, next: NextFunction) {
+		try {
 			const { email, password } = req.body;
 			if (!email && !password) throw new FluidError("provide email or password", STATUS.INTERNAL_SERVER_ERROR);
 			res.status(STATUS.OK).json({
 				user: await UserService.login(email, password)
 			})
-		}catch(err){
+		} catch (err) {
 			next(err);
 		}
+	}
+
+	static async updateUser(req: Request, res: Response, next: NextFunction) {
+		const { first_name, last_name } = req.body;
+		const userID = (req as any).userID;
+		res.status(STATUS.OK).json({
+			ok: true,
+			message: await UserService.updateUser(userID, first_name, last_name)
+		})
 	}
 }
 

@@ -9,6 +9,9 @@ class UserService{
 		return await UserDao.login(email,password)
 	}
 
+	static async updateUser(userID: string, first_name: string, last_name: string){
+		return await UserDao.updateUser(userID,first_name,last_name);
+	}
 }
 
 export default UserService;

@@ -41,6 +41,7 @@ class UserDao {
 			const user = (await User.findOne({ email }).select(
 				"+password"
 			));
+			if (!user) throw new FluidError("User not found", STATUS.BAD_REQUEST);
 			let isMatch: boolean = false;
 			if (password) {
 				isMatch = await user!.matchPassword(password, user!.password);
@@ -55,6 +56,22 @@ class UserDao {
 				profile: user!.profile,
 				token,
 			}
+		} catch (err: any) {
+			if (err instanceof mongoose.Error) {
+				throw new FluidError(err.message, STATUS.BAD_REQUEST);
+			} else {
+				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
+			}
+		}
+	}
+
+	static async updateUser(userID: string, first_name: string, last_name: string) {
+		try {
+			const user = await User.findById(userID);
+			if (first_name) user!.first_name = first_name;
+			if (last_name) user!.last_name = last_name;
+			await user!.save();
+			return "User Updated";
 		} catch (err: any) {
 			if (err instanceof mongoose.Error) {
 				throw new FluidError(err.message, STATUS.BAD_REQUEST);

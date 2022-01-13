@@ -7,7 +7,7 @@ import moment from 'moment';
 import mongoose from 'mongoose';
 
 class ProjectDao {
-  static async createProject(title: string): Promise<IProjectReturn > {
+  static async createProject(title: string): Promise<IProjectReturn> {
     try {
       const project = new Project({
         user_id: "123",
@@ -37,6 +37,7 @@ class ProjectDao {
   static async getOneProject(id: string): Promise<IProjectReturn> {
     try {
       const project = await Project.findById(id);
+      if (!project) throw new FluidError("Project not found", STATUS.NOT_FOUND);
       return {
         _id: project!._id,
         title: project!.title,
@@ -56,6 +57,8 @@ class ProjectDao {
   static async getAllProjects(userID: string = "123"): Promise<IProjectReturn[]> {
     try {
       const projects = await Project.find({ user_id: userID }).select("-__v");
+      if (!projects) throw new FluidError("Projects not found", STATUS.NOT_FOUND);
+
       const projectRefactor = projects.map((p) => ({
         _id: p._id,
         title: p.title,
@@ -76,6 +79,7 @@ class ProjectDao {
   static async updateProject(projectID: string, title: string) {
     try {
       const project = await Project.findById(projectID);
+      if (!project) throw new FluidError("Project not found", STATUS.NOT_FOUND);
       project!.title = title;
       await project!.save();
       return "Project updated";
@@ -86,7 +90,9 @@ class ProjectDao {
 
   static async deleteProject(projectID: string) {
     try {
-      await Project.findByIdAndDelete(projectID);
+      let project = await Project.findById(projectID);
+      if (!project) throw new FluidError("Project not found", STATUS.NOT_FOUND);
+      await project.remove();
       return "Project deleted";
     } catch (err: any) {
       throw new FluidError(err, STATUS.NOT_FOUND)
