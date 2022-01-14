@@ -3,7 +3,7 @@ import FluidError from '../FluidError';
 import { STATUS } from '../Types/enums';
 import mongoose from 'mongoose';
 import { IModelReturn } from "./Model.interface";
-import ProjectDao from '../Project/Project.dao'
+import ProjectService from '../Project/Project.service'
 
 class ModelDao {
 	static async createModel(projectID: string, name: string, alias: string): Promise<Pick<IModelReturn, "model_id">> {
@@ -46,7 +46,7 @@ class ModelDao {
 
 	static async getAllModel(projectID: string): Promise<Partial<IModelReturn>[]> {
 		try {
-			const project = await ProjectDao.getOneProject(projectID);
+			const project = await ProjectService.getOneProject(projectID);
 			const models = await Model.find({
 				project_id: project._id,
 			});

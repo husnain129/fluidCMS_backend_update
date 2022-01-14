@@ -9,6 +9,7 @@ class ModelService{
 	}
 
 	static async getAllModel(projectID: string){
+		console.log("projectID",projectID)
 		return await ModelDao.getAllModel(projectID);
 	}
 

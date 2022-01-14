@@ -60,10 +60,11 @@ class Project {
 
   static async deleteProject(req: Request, res: Response, next: NextFunction) {
     let { id } = req.params;
+    let data = await ProjectService.deleteProject(id);
     try {
       res.status(STATUS.OK).json({
         ok: true,
-        message: ProjectService.deleteProject(id),
+        message:data,
       });
     } catch (err) {
       next(err);
