@@ -4,9 +4,11 @@ import { STATUS } from '../Types/enums';
 import mongoose from 'mongoose';
 import { IModelReturn } from "./Model.interface";
 import ProjectService from '../Project/Project.service'
+import FieldService from '../Field/Field.service';
+import { IFieldReturn } from "../Field/Field.interface";
 
 class ModelDao {
-	static async createModel(projectID: string, name: string, alias: string): Promise<Pick<IModelReturn, "model_id">> {
+	static async createModel(projectID: string, name: string, alias: string): Promise<{ model_id: string }> {
 		try {
 			const existModelAlias = await Model.find({
 				project_id: projectID,
@@ -30,21 +32,30 @@ class ModelDao {
 			}
 		}
 	}
+	
+	static async getOneModel(projectID: string, modelAlias: string): Promise<Omit<IModelReturn, "project_id">> {
+		try {
+			const model = await Model.findOne({
+				projectID,
+				alias: modelAlias,
+			});
+			if (!model) throw new FluidError("Model not found", STATUS.BAD_REQUEST);
 
-	static async getOneModel(projectID: string, modelAlias: string): Promise<Partial<IModelReturn>> {
-		const model = await Model.findOne({
-			projectID,
-			alias: modelAlias,
-		});
-
-		if (!model) throw new FluidError("Model not found", STATUS.BAD_REQUEST);
-		return {
-			name: model.name,
-			alias: model.alias
+			return {
+				_id: model._id,
+				name: model.name,
+				alias: model.alias,
+			}
+		} catch (err: any) {
+			if (err instanceof mongoose.Error) {
+				throw new FluidError(err.message, STATUS.BAD_REQUEST);
+			} else {
+				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
+			}
 		}
 	}
 
-	static async getAllModel(projectID: string): Promise<Partial<IModelReturn>[]> {
+	static async getAllModel(projectID: string): Promise<Omit<IModelReturn, "project_id">[]> {
 		try {
 			const project = await ProjectService.getOneProject(projectID);
 			const models = await Model.find({
@@ -106,7 +117,6 @@ class ModelDao {
 			}
 		}
 	}
-
 }
 
 export default ModelDao;

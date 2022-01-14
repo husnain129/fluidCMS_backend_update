@@ -11,6 +11,7 @@ const bodyParser = require("body-parser");
 import("./User/User.route");
 import("./Project/Project.route");
 import("./Model/Model.route");
+import("./Field/Field.route");
 
 const app = express();
 app.use(
