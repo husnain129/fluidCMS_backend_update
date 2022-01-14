@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AccessToken } from "../Types/enums";
 import FluidError from "../FluidError";
-const Project = require("../models/project.schema");
+import Project from "../Project/Project.schema";
 import { STATUS } from '../Types/enums'
 
 const access = (requiredAccess: AccessToken) => {

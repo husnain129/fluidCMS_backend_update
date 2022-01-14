@@ -1,7 +1,7 @@
 import FluidError from "../FluidError";
 import { AccessToken, STATUS } from "../Types/enums";
 import { generateAccessToken } from "./../utils/generateAccessToken";
-import Project from "./project.schema";
+import Project from "./Project.schema";
 import { IProjectReturn, TAccess } from "./Project.interface";
 import moment from 'moment';
 import mongoose from 'mongoose';

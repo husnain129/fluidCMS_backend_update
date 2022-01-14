@@ -8,6 +8,7 @@ export interface IModel extends Document {
 
 
 export interface IModelReturn {
+  _id?:string;
   model_id:string;
   name: IModel["name"];
   alias: IModel["alias"];

@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { IProject } from "./Project.interface";
 
 const projectSchema = new Schema({
@@ -19,4 +19,5 @@ const projectSchema = new Schema({
   },
 });
 
-export default model<IProject>("Project", projectSchema);
+
+export default model<IProject>("Project",projectSchema);
