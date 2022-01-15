@@ -9,11 +9,19 @@ export interface RecordField {
 export interface IRecord extends Document {
   _id: string;
   model_id: string;
-  fields: [RecordField];
+  fields: RecordField[];
 }
 
-export interface IRecordFields {
-  _id: IRecord["_id"];
+export interface IRecordBody {
   model_id: IRecord["model_id"];
   fields: IRecord["fields"];
+}
+
+export interface IRecordReturn {
+  _id: IRecord["_id"];
+  model_id: IRecord["model_id"];
+  fields: {
+    field_id:string,
+    [key: string]: string 
+  };
 }

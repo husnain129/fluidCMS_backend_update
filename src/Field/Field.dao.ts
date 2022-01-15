@@ -56,7 +56,6 @@ class FieldDao {
 	static async getOneField(fieldAlias: string, modelID: string): Promise<IFieldReturn> {
 
 		try {
-
 			let field = await Field.findOne({
 				alias: fieldAlias,
 				model_id: modelID,
