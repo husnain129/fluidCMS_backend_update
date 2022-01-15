@@ -14,6 +14,14 @@ class RecordService {
 	static async getAllRecords(projectID: string, modelAlias: string) {
 		return await RecordDao.getAllRecords(projectID, modelAlias);
 	}
+
+	static async deleteRecord(recordID: string) {
+		return await RecordDao.deleteRecord(recordID);
+	}
+	
+	static async deleteRecords(recordIDs: Array<string>) {
+		return await RecordDao.deleteRecords(recordIDs);
+	}
 }
 
 export default RecordService;

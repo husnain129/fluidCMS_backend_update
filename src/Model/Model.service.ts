@@ -9,35 +9,11 @@ class ModelService {
 	}
 
 	static async getOneModel(projectID: string, alias: string) {
-		const model = await ModelDao.getOneModel(projectID, alias);
-		let fields = await FieldDao.getAllFields(model._id) as IFieldReturn[];
-		const modelResponse = { ...model, fields: [...fields] }
-		return modelResponse;
+		return await ModelDao.getOneModel(projectID, alias);
 	}
 
 	static async getAllModel(projectID: string) {
-		const models = await ModelDao.getAllModel(projectID);
-		let response: (Omit<IModelReturn, "project_id"> & { fields: Omit<IFieldReturn, "model_id">[] })[] = [];
-		await Promise.all(
-			models.map(async (m) => {
-				if (m.alias) {
-					let fields = await FieldDao.getAllFields(m._id) as IFieldReturn[]
-					response.push({
-						...m,
-						fields: fields.map((_f) => {
-							return {
-								_id: _f._id,
-								name: _f.name,
-								alias: _f.alias,
-								field_type: _f.field_type,
-								validation: _f.validation,
-							};
-						}),
-					})
-				}
-			})
-		)
-		return response;
+		return await ModelDao.getAllModel(projectID);
 	}
 
 	static async deleteModel(projectID: string, alias: string) {

@@ -6,6 +6,9 @@ import { IModelReturn } from "./Model.interface";
 import ProjectService from '../Project/Project.service'
 import FieldService from '../Field/Field.service';
 import { IFieldReturn } from "../Field/Field.interface";
+import FieldDao from '../Field/Field.dao'
+
+type TModelResponse = Omit<IModelReturn, "project_id"> & { fields: IFieldReturn[] };
 
 class ModelDao {
 	static async createModel(projectID: string, name: string, alias: string): Promise<{ model_id: string }> {
@@ -32,20 +35,22 @@ class ModelDao {
 			}
 		}
 	}
-	
-	static async getOneModel(projectID: string, modelAlias: string): Promise<Omit<IModelReturn, "project_id">> {
+
+	static async getOneModel(projectID: string, modelAlias: string): Promise<TModelResponse> {
 		try {
 			const model = await Model.findOne({
 				projectID,
 				alias: modelAlias,
 			});
 			if (!model) throw new FluidError("Model not found", STATUS.BAD_REQUEST);
-
-			return {
-				_id: model._id,
-				name: model.name,
-				alias: model.alias,
+			let fields = await FieldDao.getAllFields(model._id) as IFieldReturn[];
+			const modelResponse: TModelResponse = {
+					_id:model._id,
+					name: model.name,
+					alias: model.alias,
+					fields: [...fields],	
 			}
+			return modelResponse;
 		} catch (err: any) {
 			if (err instanceof mongoose.Error) {
 				throw new FluidError(err.message, STATUS.BAD_REQUEST);
@@ -63,14 +68,28 @@ class ModelDao {
 			});
 
 			if (!models) throw new FluidError("Models not found", STATUS.BAD_REQUEST);
+			let response: (Omit<IModelReturn, "project_id"> & { fields: Omit<IFieldReturn, "model_id">[] })[] = [];
 
-			let response = models.map((m) => {
-				return {
-					_id: m._id,
-					name: m.name,
-					alias: m.alias,
-				}
-			})
+			await Promise.all(
+				models.map(async (m) => {
+					let fields = await FieldDao.getAllFields(m._id) as IFieldReturn[]
+					response.push({
+						_id: m._id,
+						name: m.name,
+						alias: m.alias,
+						fields: fields.map((_f) => {
+							return {
+								_id: _f._id,
+								name: _f.name,
+								alias: _f.alias,
+								field_type: _f.field_type,
+								validation: _f.validation,
+							};
+						}),
+					})
+				})
+			)
+
 			return response;
 		} catch (err: any) {
 			if (err instanceof mongoose.Error) {

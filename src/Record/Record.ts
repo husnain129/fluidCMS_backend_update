@@ -40,6 +40,29 @@ class Record {
 			next(err);
 		}
 	}
+	static async deleteRecord(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { id: recordID } = req.params;
+
+			res.status(STATUS.CREATED).json({
+				ok: true,
+				record: await RecordService.deleteRecord(recordID)
+			})
+		} catch (err) {
+			next(err);
+		}
+	}
+	static async deleteRecords(req: Request, res: Response, next: NextFunction) {
+		try {
+			let recordIDs: Array<string> = req.body.ids;
+			res.status(STATUS.CREATED).json({
+				ok: true,
+				record: await RecordService.deleteRecords(recordIDs)
+			})
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 export default Record;

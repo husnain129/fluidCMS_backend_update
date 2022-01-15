@@ -10,6 +10,12 @@ import { STATUS } from '../Types/enums';
 import mongoose from 'mongoose';
 
 class RecordDao {
+
+	private static async getFieldAlias(id: string): Promise<string> {
+		let field = await Field.findOne({ _id: id }) as IFieldReturn;
+		return field.alias
+	}
+
 	static async createRecord(recordBody: { [key: string]: string }, projectID: string, modelID: string) {
 		try {
 			let record = new Record({
@@ -145,11 +151,35 @@ class RecordDao {
 		}
 	}
 
-
-	private static async getFieldAlias(id: string): Promise<string> {
-		let field = await Field.findOne({ _id: id }) as IFieldReturn;
-		return field.alias
+	static async deleteRecord(recordID: string) {
+		try {
+			const record = await Record.findOne({ _id: recordID });
+			if (!record) throw new FluidError("record not found", STATUS.BAD_REQUEST);
+			await record.remove();
+			return 'Record deleted'
+		} catch (err: any) {
+			if (err instanceof mongoose.Error) {
+				throw new FluidError(err.message, STATUS.BAD_REQUEST);
+			} else {
+				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
+			}
+		}
 	}
+
+	static async deleteRecords(recordIDs: Array<string>) {
+		try {
+			if (!recordIDs) throw new FluidError("Missing ids in body", STATUS.BAD_REQUEST);
+			await Record.deleteMany({ _id: { $in: recordIDs } });
+			return "Records deleted";
+		} catch (err: any) {
+			if (err instanceof mongoose.Error) {
+				throw new FluidError(err.message, STATUS.BAD_REQUEST);
+			} else {
+				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
+			}
+		}
+	}
+
 }
 
 
