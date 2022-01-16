@@ -19,6 +19,11 @@ class FieldService {
 		const model = await ModelDao.getOneModel(projectID, modelAlias);
 		return await FieldDao.getAllFields(model._id);
 	}
+
+	static async deleteField(projectID:string,modelAlias:string,fieldAlias:string){
+		const model = await ModelDao.getOneModel(projectID, modelAlias);
+		return await FieldDao.deleteField(model._id, fieldAlias);
+	}
 }
 
 export default FieldService;

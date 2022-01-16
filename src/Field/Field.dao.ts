@@ -1,6 +1,7 @@
 import { IFieldBody, IFieldReturn } from './Field.interface';
 import ProjectService from '../Project/Project.service';
 import ModelService from '../Model/Model.service';
+import Record from '../Record/Record.schema';
 import Field from './Field.schema'
 import FluidError from '../FluidError';
 import { STATUS, FieldType } from '../Types/enums';
@@ -26,21 +27,20 @@ class FieldDao {
 
 			await field.save();
 
-			// // update all the records of this model
+			// update all the records of this model
 
-			// if (field._id) {
-			// 	let records = await Record.find({ model_id: modelID });
-			// 	if (records && records.length > 0) {
-			// 		for (let r of records) {
-			// 			r.fields.push({
-			// 				field_id: field._id,
-			// 				value: "",
-			// 			});
-			// 			r.save();
-			// 		}
-			// 	}
-			// }
-
+			if (field._id) {
+				let records = await Record.find({ model_id: model_id });
+				if (records && records.length > 0) {
+					for (let r of records) {
+						r.fields.push({
+							field_id: field._id,
+							value: "",
+						});
+						r.save();
+					}
+				}
+			}
 
 			return { field_id: field._id }
 
@@ -82,7 +82,6 @@ class FieldDao {
 
 	static async getAllFields(modelID: string): Promise<Omit<IFieldReturn, "model_id">[]> {
 		try {
-			console.log("askdslakd")
 			let fields = await Field.find({ model_id: modelID });
 			if (!fields) throw new FluidError(`Fields not found`, STATUS.BAD_REQUEST);
 			const fieldsResponse = fields.map((val: any) => {
@@ -102,6 +101,23 @@ class FieldDao {
 				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
 			}
 		}
+	}
+
+	static async deleteField(modelID: string, fieldAlias: string) {
+		let field = await Field.findOne({ alias:fieldAlias, modelID });
+		if (!field) throw new FluidError( `Field not found`,STATUS.BAD_REQUEST);
+		let record = await Record.find({ model_id: field.model_id });
+
+		await Promise.all(
+			record.map(async (val: any, ind: number) => {
+				record[ind].fields = val.fields.filter((val: any) => {
+					return val.field_id.toString() !== field?._id?.toString();
+				});
+				await record[ind].save();
+			})
+		);
+		await Field.deleteOne({ _id: field._id });
+		return "Field deleted"
 	}
 }
 

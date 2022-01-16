@@ -13,6 +13,7 @@ import("./Project/Project.route");
 import("./Model/Model.route");
 import("./Field/Field.route");
 import("./Record/Record.route");
+import("./Media/Media.route");
 
 const app = express();
 app.use(

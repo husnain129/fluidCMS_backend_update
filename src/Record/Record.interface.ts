@@ -25,3 +25,4 @@ export interface IRecordReturn {
     [key: string]: string 
   };
 }
+

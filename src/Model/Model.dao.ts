@@ -100,9 +100,9 @@ class ModelDao {
 		}
 	}
 
-	static async deleteModel(projectID: string, alias: string) {
+	static async deleteModel(projectID: string, modelAlias: string) {
 		try {
-			const model = await Model.findOne({ alias, project_id: projectID })
+			const model = await Model.findOne({ alias:modelAlias, project_id: projectID })
 			if (!model) throw new FluidError("Model not found", STATUS.BAD_REQUEST);
 			model.remove()
 			return "Delete"

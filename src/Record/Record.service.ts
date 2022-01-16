@@ -18,7 +18,7 @@ class RecordService {
 	static async deleteRecord(recordID: string) {
 		return await RecordDao.deleteRecord(recordID);
 	}
-	
+
 	static async deleteRecords(recordIDs: Array<string>) {
 		return await RecordDao.deleteRecords(recordIDs);
 	}
