@@ -1,4 +1,5 @@
 require("dotenv").config();
+import * as Sentry from "@sentry/node";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import FluidError from "FluidError";
@@ -44,7 +45,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   // let duplicateError =
   //   (error as any).statusCode === 500 &&
   //   error.message.split(" ")[0] === "E11000";
-  console.log(error)
+  console.log(error);
 
   res.status((error as FluidError).statusCode || 500).json({
     ok: false,
@@ -54,8 +55,34 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 
 const PORT: number = parseInt(process.env.PORT || "3001");
 
-connect("mongodb://127.0.0.1:27017/Fluid")
-  .then(() => {console.log("DB Connected....");})
-  .catch(err => {console.log("Mongoose Connection Error", err)})
+Sentry.init({
+  dsn: "https://6be40d3876474611a765d9ea7466eb94@o1117543.ingest.sentry.io/6151470",
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+
+const transaction = Sentry.startTransaction({
+  op: "test",
+  name: "My First Test Transaction",
+});
+
+setTimeout(() => {
+  try {
+    connect("mongodb://127.0.0.1:27017/Fluid")
+      .then(() => {
+        console.log("DB Connected....");
+      })
+      .catch((err) => {
+        console.log("Mongoose Connection Error", err);
+      });
+  } catch (e) {
+    Sentry.captureException(e);
+  } finally {
+    transaction.finish();
+  }
+}, 99);
 
 app.listen(PORT, () => console.log(`Server is Listening On PORT ${PORT}...`));
