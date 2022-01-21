@@ -4,6 +4,16 @@ import User from './User.schema'
 import { STATUS } from '../Types/enums'
 import generateJWTToken from '../utils/generateJWTToken';
 import mongoose from 'mongoose';
+import { uploadImage, deleteImage } from '../utils/mediaCDN';
+import { ISize } from '../Media/Media.interface';
+
+export let size: ISize = {
+	sm: { width: 300 },
+	md: { width: 0.5, height: 0.5 },
+	raw: {},
+	thumb: { width: 192 },
+	profile_img: { width: 720 },
+};
 
 class UserDao {
 	static async createUser(_b: IUserBody): Promise<IUserReturn> {
@@ -99,6 +109,31 @@ class UserDao {
 			} else {
 				throw new FluidError(err, STATUS.INTERNAL_SERVER_ERROR);
 			}
+		}
+	}
+
+	static async postUserImage(userID:string,file:any){
+		try{	
+			const user = await User.findById(userID);
+			if (!user) throw new FluidError("User not found.",STATUS.BAD_REQUEST);
+
+	    let image: { thumb: any; profile_img: any } = {
+	      thumb: null,
+	      profile_img: null,
+	    };
+
+			let [thumb, profile_img] = await Promise.all([
+				uploadImage(size.thumb, file.tempFilePath),
+				uploadImage(size.profile_img, file.tempFilePath),
+			]);
+
+			image = { thumb, profile_img };
+
+			user.profile = image;
+			await user.save();
+			return {profile: user.profile}
+		}catch(err:any){
+			throw new FluidError("something went wrong",STATUS.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

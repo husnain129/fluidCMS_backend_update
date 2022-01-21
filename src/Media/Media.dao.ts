@@ -4,6 +4,7 @@ import Media from './Media.schema';
 import FluidError from '../FluidError';
 import { STATUS } from '../Types/enums'
 
+
 export let size: ISize = {
 	sm: { width: 300 },
 	md: { width: 0.5, height: 0.5 },

@@ -57,6 +57,17 @@ class User {
       message: await UserService.updatePassword(userID, password, newPassword),
     });
   }
+
+  static async postUserImage(req: Request, res: Response, next: NextFunction) {
+    const file = (req.files as any).image;
+    let userID = (req as any).userID;
+    res.status(STATUS.OK).json({
+      ok: true,
+      profile: await UserService.postUserImage(userID,file),
+    });
+  }
+
+
 }
 
 export default User;

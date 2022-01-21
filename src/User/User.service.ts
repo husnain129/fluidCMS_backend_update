@@ -16,6 +16,10 @@ class UserService{
 	static async updatePassword(userID:string,password:string,newPassword:string){
 		return await UserDao.updatePassword(userID, password, newPassword);
 	}
+
+	static async postUserImage(userID:string,file:any){
+		return await UserDao.postUserImage(userID,file);
+	}
 }
 
 export default UserService;

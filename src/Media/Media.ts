@@ -3,6 +3,7 @@ import FluidError from '../FluidError';
 import { STATUS } from '../Types/enums'
 import MediaService from './Media.service'
 
+
 class Media {
 	static async uploadImage(req: Request, res: Response, next: NextFunction) {
 		try {
