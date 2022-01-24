@@ -1,10 +1,8 @@
 import FluidError from "../FluidError";
 import { AccessToken, STATUS } from "../Types/enums";
 import { generateAccessToken } from "./../utils/generateAccessToken";
-import Project from "./Project.schema";
 import { IProjectReturn, TAccess } from "./Project.interface";
-import moment from 'moment';
-import mongoose from 'mongoose';
+import Project from "./Project.schema";
 
 class ProjectDao {
   static async createProject(title: string): Promise<IProjectReturn> {
@@ -54,10 +52,11 @@ class ProjectDao {
     }
   }
 
-  static async getAllProjects(userID: string = "123"): Promise<IProjectReturn[]> {
+  static async getAllProjects(userID: string): Promise<IProjectReturn[]> {
     try {
       const projects = await Project.find({ user_id: userID }).select("-__v");
-      if (!projects) throw new FluidError("Projects not found", STATUS.NOT_FOUND);
+      if (!projects)
+        throw new FluidError("Projects not found", STATUS.NOT_FOUND);
 
       const projectRefactor = projects.map((p) => ({
         _id: p._id,
@@ -69,10 +68,10 @@ class ProjectDao {
             access_type: t.access_type,
           };
         }),
-      }))
+      }));
       return projectRefactor;
     } catch (err: any) {
-      throw new FluidError(err, STATUS.NOT_FOUND)
+      throw new FluidError(err, STATUS.NOT_FOUND);
     }
   }
 
@@ -84,7 +83,7 @@ class ProjectDao {
       await project!.save();
       return "Project updated";
     } catch (err: any) {
-      throw new FluidError(err, STATUS.NOT_FOUND)
+      throw new FluidError(err, STATUS.NOT_FOUND);
     }
   }
 
@@ -95,7 +94,7 @@ class ProjectDao {
       await project.remove();
       return "Project deleted";
     } catch (err: any) {
-      throw new FluidError(err, STATUS.NOT_FOUND)
+      throw new FluidError(err, STATUS.NOT_FOUND);
     }
   }
 }

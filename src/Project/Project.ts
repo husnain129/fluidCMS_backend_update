@@ -64,7 +64,7 @@ class Project {
     try {
       res.status(STATUS.OK).json({
         ok: true,
-        message:data,
+        message: data,
       });
     } catch (err) {
       next(err);

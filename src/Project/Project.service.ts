@@ -1,5 +1,5 @@
+import ModelService from "../Model/Model.service";
 import ProjectDao from "./Project.dao";
-import ModelService from '../Model/Model.service';
 
 class ProjectService {
   static async create(title: string) {
@@ -11,7 +11,7 @@ class ProjectService {
   }
 
   static async getAllProjects(userID: string) {
-    return await ProjectDao.getAllProjects();
+    return await ProjectDao.getAllProjects(userID);
   }
 
   static async updateProject(projectID: string, title: string) {
@@ -22,9 +22,9 @@ class ProjectService {
     const models = await ModelService.getAllModel(projectID);
     await Promise.all(
       models.map(async (m) => {
-        m.alias && await ModelService.deleteModel(projectID, m.alias)
+        m.alias && (await ModelService.deleteModel(projectID, m.alias));
       })
-    )
+    );
     return await ProjectDao.deleteProject(projectID);
   }
 }
