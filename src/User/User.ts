@@ -66,8 +66,6 @@ class User {
       profile: await UserService.postUserImage(userID,file),
     });
   }
-
-
 }
 
 export default User;

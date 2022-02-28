@@ -56,7 +56,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 const PORT: number = parseInt(process.env.PORT || "3001");
 
 Sentry.init({
-  dsn: "https://6be40d3876474611a765d9ea7466eb94@o1117543.ingest.sentry.io/6151470",
+  dsn: process.env.SANITY_DNS,
 
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
